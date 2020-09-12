@@ -11,6 +11,12 @@ const server = http.createServer((req, res) => {
   // res.write(req.headers['user-agent']);
   res.write('<!DOCTYPE html><html lang="ja"><body><h1>HTMLの一番大きい見出しを表示します</h1></body></html>')
   res.end();
+})
+.on('error', e => {
+  console.error('[' + new Date() + '[ Server Error', e);
+})
+.on('clientError', e => {
+  console.error('[' + new Date() + '] Client Error', e);
 });
 
 const port = 8000;
