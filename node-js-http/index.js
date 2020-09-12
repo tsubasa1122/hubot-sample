@@ -8,8 +8,25 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8'
   });
-  // res.write(req.headers['user-agent']);
-  res.write('<!DOCTYPE html><html lang="ja"><body><h1>HTMLの一番大きい見出しを表示します</h1></body></html>')
+  switch(req.method) {
+    case 'GET':
+      res.write('GET' + req.url);
+      break;
+    case 'POST':
+      res.write('POST' + req.url);
+      let rawData = '';
+      req.on('data', chunk => {
+        rawData = rawData + chunk;
+      }).on('end', () => {
+        console.info('[' + new Date() + '] Data posted:' + rawData);
+      });
+      break;
+    case 'DELETE':
+      res.write('DELETE ' + req.url);
+      break;
+    default:
+      break;
+  }
   res.end();
 })
 .on('error', e => {
