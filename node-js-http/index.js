@@ -10,7 +10,9 @@ const server = http.createServer((req, res) => {
   });
   switch(req.method) {
     case 'GET':
-      res.write('GET' + req.url);
+        const fs = require('fs');
+        const rs = fs.createReadStream('./form.html');
+        rs.pipe(res);
       break;
     case 'POST':
       res.write('POST' + req.url);
@@ -18,16 +20,19 @@ const server = http.createServer((req, res) => {
       req.on('data', chunk => {
         rawData = rawData + chunk;
       }).on('end', () => {
-        console.info('[' + new Date() + '] Data posted:' + rawData);
+        const decoded = decodeURIComponent(rawData);
+        console.info('[' + new Date() + '] 投稿: ' + decoded);
+        res.write('<!DOCTYPE html><html lang="ja"><body><h1>' + decoded + 'が投稿されました</h1></body></html>');
+        res.end()
       });
       break;
     case 'DELETE':
       res.write('DELETE ' + req.url);
+      res.end();
       break;
     default:
       break;
   }
-  res.end();
 })
 .on('error', e => {
   console.error('[' + new Date() + '[ Server Error', e);
