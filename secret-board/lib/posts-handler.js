@@ -16,7 +16,8 @@ function handle(req, res) {
       });
       Post.findAll().then((posts) => {
         res.end(pug.renderFile('./views/posts.pug', {
-          posts: posts
+          posts: posts,
+          user: req.user
         }));
         console.info(
           `閲覧されました: user: ${req.user}, ` +
@@ -48,6 +49,31 @@ function handle(req, res) {
   }
 }
 
+function handleDelete(req, res) {
+  switch (req.method) {
+    case 'POST':
+      let body = [];
+      req.on('data', (chunk) => {
+        body.push(chunk);
+      }).on('end', () => {
+        body = Buffer.concat(body).toString();
+        const decoded = decodeURIComponent(body);
+        const id = decoded.split('id=')[1];
+        Post.findByPk(id).then((post) => {
+          if (req.user === post.postedBy) {
+            post.destroy().then(() => {
+              handleRedirectPosts(req, res);
+            });
+          }
+        });
+      });
+      break;
+    default:
+      util.handleBadRequest(req, res);
+      break;
+  }
+}
+
 function addTrackingCookie(cookies) {
   if (!cookies.get(trackingIdKey)) {
     const trackingId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
@@ -64,5 +90,6 @@ function handleRedirectPosts(req, res) {
 }
 
 module.exports = {
-  handle
+  handle,
+  handleDelete
 };
