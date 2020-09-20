@@ -1,4 +1,5 @@
 'use strict';
+const fs = require('fs');
 
 function handleLogout(req, res) {
   res.writeHead(401, {
@@ -18,7 +19,16 @@ function handleNotFound(req, res) {
   res.end('ページが見つかりません');
 }
 
+function handleFavicon(req, res) {
+  res.writeHead(200, {
+    'Content-Type': 'image/vnd.microsoft.icon'
+  });
+  const favicon = fs.readFileSync('./favicon.ico');
+  res.end(favicon);
+}
+
 module.exports = {
   handleLogout,
-  handleNotFound
+  handleNotFound,
+  handleFavicon
 };
