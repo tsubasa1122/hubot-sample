@@ -16,5 +16,8 @@
     "passport": "0.3.2",
     "passport-github2": "0.1.9",
     "pug": "2.0.0-beta11"
+  },
+  "devDependencies": {
+    "jest": "25.1.0"
   }
 }
